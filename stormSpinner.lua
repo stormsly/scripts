@@ -1,3 +1,7 @@
+if game.CoreGui.RobloxGui:FindFirstChild("stormSpinner") then
+	game.CoreGui.RobloxGui:FindFirstChild("stormSpinner"):Destroy()
+end
+
 local stormSpinner = Instance.new("ScreenGui")
 local mainFrame = Instance.new("Frame")
 local UICorner = Instance.new("UICorner")
@@ -15,7 +19,7 @@ mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 mainFrame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
 mainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
 mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-mainFrame.Size = UDim2.new(0, 345, 0, 150)
+mainFrame.Size = UDim2.new(0, 345, 0, 148)
 
 UICorner.Parent = mainFrame
 
@@ -47,9 +51,21 @@ message.TextSize = 20.000
 UIAspectRatioConstraint.Parent = stormSpinner
 UIAspectRatioConstraint.AspectRatio = 1.507
 
-local function VBIPQTT_fake_script() -- mainFrame.handler 
+local protectGui, getHui = (syn and syn.protect_gui), (gethui or get_hidden_gui)
+
+if protectGui then 
+	protectGui(stormSpinner)
+	stormSpinner.Parent = game.CoreGui.RobloxGui
+elseif getHui then 
+	stormSpinner.Parent = getHui()
+else 
+	stormSpinner.Parent = game.CoreGui.RobloxGui
+end 
+
+local function XUKRI_fake_script() -- mainFrame.handler 
 	local script = Instance.new('LocalScript', mainFrame)
 
+	repeat task.wait() until game:IsLoaded()
 	repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("CC")
 	
 	function getClan()
@@ -107,4 +123,4 @@ local function VBIPQTT_fake_script() -- mainFrame.handler
 		end
 	end
 end
-coroutine.wrap(VBIPQTT_fake_script)()
+coroutine.wrap(XUKRI_fake_script)()
