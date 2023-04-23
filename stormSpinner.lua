@@ -1,6 +1,8 @@
-if game.CoreGui.RobloxGui:FindFirstChild("stormSpinner") then
-	game.CoreGui.RobloxGui:FindFirstChild("stormSpinner"):Destroy()
+if stormSpinnerLoaded then
+	return
 end
+
+pcall(function() getgenv().stormSpinnerLoaded = true end)
 
 local stormSpinner = Instance.new("ScreenGui")
 local mainFrame = Instance.new("Frame")
@@ -10,7 +12,6 @@ local message = Instance.new("TextLabel")
 local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 
 stormSpinner.Name = "stormSpinner"
-stormSpinner.Parent = game.CoreGui.RobloxGui
 stormSpinner.ResetOnSpawn = false
 
 mainFrame.Name = "mainFrame"
@@ -44,36 +45,51 @@ message.BorderSizePixel = 0
 message.Position = UDim2.new(0.157839209, 0, 0.489147484, 0)
 message.Size = UDim2.new(0, 235, 0, 50)
 message.Font = Enum.Font.SourceSansSemibold
-message.Text = "Waiting For Game"
+message.Text = "Waiting For Game."
 message.TextColor3 = Color3.fromRGB(255, 255, 255)
 message.TextSize = 20.000
 
 UIAspectRatioConstraint.Parent = stormSpinner
 UIAspectRatioConstraint.AspectRatio = 1.507
 
-local protectGui, getHui = (syn and syn.protect_gui), (gethui or get_hidden_gui)
+PARENT = nil
+if get_hidden_gui or gethui then
+	local hiddenUI = get_hidden_gui or gethui
+	local Main = Instance.new("ScreenGui")
+	Main.Name = game:GetService("HttpService"):GenerateGUID()
+	Main.Parent = hiddenUI()
+	PARENT = Main
+elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
+	local Main = Instance.new("ScreenGui")
+	Main.Name = game:GetService("HttpService"):GenerateGUID()
+	syn.protect_gui(Main)
+	Main.Parent = game.CoreGui
+	PARENT = Main
+elseif COREGUI:FindFirstChild('RobloxGui') then
+	PARENT = game.CoreGui.RobloxGui
+else
+	local Main = Instance.new("ScreenGui")
+	Main.Name = game:GetService("HttpService"):GenerateGUID()
+	Main.Parent = game.CoreGui
+	PARENT = Main
+end
 
-if protectGui then 
-	protectGui(stormSpinner)
-	stormSpinner.Parent = game.CoreGui.RobloxGui
-elseif getHui then 
-	stormSpinner.Parent = getHui()
-else 
-	stormSpinner.Parent = game.CoreGui.RobloxGui
-end 
+stormSpinner.Parent = PARENT
 
 local function XUKRI_fake_script() -- mainFrame.handler 
 	local script = Instance.new('LocalScript', mainFrame)
 
 	repeat task.wait() until game:IsLoaded()
-	repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("CC")
+	repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Gui")
+
+    local spinnerRemote = game:GetService("Players").LocalPlayer.PlayerGui.Gui.Ui.UiModule.Modules.Shop.RerollClan.RollClanFrame.Clan.RRLastName.LocalScript.RR
 	
 	function getClan()
-		return game:GetService("Players").LocalPlayer.PlayerGui.CC.Main.Clan.LName.Text
+		return game:GetService("Players").LocalPlayer.PlayerGui.Gui.Ui.UiModule.Modules.Shop.RerollClan.RollClanFrame.Clan.LName.Text
 	end
 	
 	function getSpins()
-		local first = game:GetService("Players").LocalPlayer.PlayerGui.CC.Main.Clan.Spins.Text
+		local first = game:GetService("Players").LocalPlayer.PlayerGui.Gui.Ui.UiModule.Modules.Shop.RerollClan.RollClanFrame.Clan.Spins.Text
 		local second = first:split(" ");
 		return tonumber(second[1])
 	end
@@ -84,7 +100,7 @@ local function XUKRI_fake_script() -- mainFrame.handler
 	
 	function spinClan()
 		game:GetService("ReplicatedStorage").Events.GetStats:InvokeServer({["Stat"] = "Spins"})
-		game:GetService("Players").LocalPlayer.PlayerGui.CC.Main.Clan.RRLastName.LocalScript.RR:InvokeServer("RRLastName")
+		spinnerRemote:InvokeServer("RRLastName")
 		print(getClan())
 	end
 	
@@ -117,7 +133,7 @@ local function XUKRI_fake_script() -- mainFrame.handler
 		elseif getSpins() <= 0 then
 			
 			script.Parent.message.Text = "Ran out of spins, rejoining."
-			task.wait(1)
+			if storm_spinner.slow_mode then task.wait(10) else task.wait(1) end
 			dataLoss()
 			
 			game:GetService('TeleportService'):Teleport(game.PlaceId, game:GetService("Players").LocalPlayer)
