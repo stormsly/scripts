@@ -85,6 +85,7 @@ local function XUKRI_fake_script() -- mainFrame.handler
 	function spinClan()
 		game:GetService("ReplicatedStorage").Events.GetStats:InvokeServer({["Stat"] = "Spins"})
 		game:GetService("Players").LocalPlayer.PlayerGui.CC.Main.Clan.RRLastName.LocalScript.RR:InvokeServer("RRLastName")
+		print(getClan())
 	end
 	
 	if table.find(storm_spinner.desired_clans, getClan()) then
